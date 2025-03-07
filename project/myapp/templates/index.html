@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Docs API Integration</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; padding: 20px; }
+        textarea { width: 100%; height: 200px; }
+        button { padding: 10px 20px; background: blue; color: white; border: none; cursor: pointer; }
+        #response { margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h2>Create Google Doc with Formatted Content</h2>
+    
+    <textarea id="htmlContent">
+        <h1>My Title</h1>
+        <p>This is a test paragraph.</p>
+        <strong>This is bold text.</strong>
+        <em>This is italic text.</em>
+    </textarea>
+
+    <button onclick="createGoogleDoc()">Create Google Doc</button>
+
+    <div id="response"></div>
+
+    <script>
+        function createGoogleDoc() {
+            const content = document.getElementById("htmlContent").value;
+
+            fetch("/api/create-doc/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content: content })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.doc_url) {
+                    document.getElementById("response").innerHTML = `<p>Google Doc Created: <a href="${data.doc_url}" target="_blank">${data.doc_url}</a></p>`;
+                } else {
+                    document.getElementById("response").innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+
+</body>
+</html>
