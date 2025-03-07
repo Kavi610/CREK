@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Assistant</title>
+</head>
+<body>
+    <h2>Ask a Question</h2>
+    <input type="text" id="question" placeholder="Type your question">
+    <button onclick="askQuestion()">Submit</button>
+    <h3>Response:</h3>
+    <p id="responseText"></p>
+    <audio id="audioResponse" controls></audio>
+
+    <script>
+        function askQuestion() {
+            const question = document.getElementById("question").value;
+
+            fetch("/api/ask/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question: question })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.text_response) {
+                    document.getElementById("responseText").innerText = data.text_response;
+                    document.getElementById("audioResponse").src = data.audio_url;
+                } else {
+                    document.getElementById("responseText").innerText = "Error: " + data.error;
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
